@@ -1,9 +1,4 @@
-#ifndef GLPKFLUXBALANCESOLVER_H
-#define GLPKFLUXBALANCESOLVER_H
-
-#include "tools/Biochemical/MetabolicFluxBalanceSolver.h"
-
-#ifdef GENESYS_HAVE_GLPK
+#include "MetabolicFluxBalanceSolver_if.h"
 
 #include <glpk.h>
 #include <cstring>
@@ -36,10 +31,10 @@
  * CMake will print:
  *   GenESyS: GLPK found — MetabolicFluxBalance ... will use GLPK LP solver
  */
-class GlpkFluxBalanceSolver {
+class GlpkFluxBalanceSolver : public MetabolicFluxBalanceSolver_if {
 public:
-	static MetabolicFluxBalanceSolver::Solution solve(const MetabolicFluxBalanceSolver::Problem& problem) {
-		MetabolicFluxBalanceSolver::Solution solution;
+	MetabolicFluxBalanceSolver_if::Solution solve(const MetabolicFluxBalanceSolver_if::Problem& problem) override {
+		MetabolicFluxBalanceSolver_if::Solution solution;
 		const std::size_t nCols = problem.objective.size();
 		const std::size_t nRows = problem.stoichiometry.size();
 
@@ -141,7 +136,3 @@ public:
 		return solution;
 	}
 };
-
-#endif /* GENESYS_HAVE_GLPK */
-
-#endif /* GLPKFLUXBALANCESOLVER_H */

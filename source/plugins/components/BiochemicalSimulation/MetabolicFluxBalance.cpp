@@ -9,10 +9,8 @@
 #include "../../../kernel/simulator/model/ModelDataManager.h"
 #include "plugins/data/BiochemicalSimulation/BioSpecies.h"
 #include "plugins/data/BiochemicalSimulation/MetabolicReaction.h"
-#include "tools/Biochemical/MetabolicFluxBalanceSolver.h"
-#ifdef GENESYS_HAVE_GLPK
-#include "tools/Biochemical/GlpkFluxBalanceSolver.h"
-#endif
+#include "MetabolicFluxBalance.h"
+#include "tools/TraitsTools.h"
 
 #ifdef PLUGINCONNECT_DYNAMIC
 
@@ -198,7 +196,7 @@ void MetabolicFluxBalance::_onDispatchEvent(Entity* entity, unsigned int inputPo
 		}
 	}
 
-	MetabolicFluxBalanceSolver::Problem problem;
+	MetabolicFluxBalanceSolver_if::Problem problem;
 	problem.stoichiometry.assign(internalSpeciesNames.size(), std::vector<double>(reactions.size(), 0.0));
 	problem.lowerBounds.reserve(reactions.size());
 	problem.upperBounds.reserve(reactions.size());
@@ -245,11 +243,9 @@ void MetabolicFluxBalance::_onDispatchEvent(Entity* entity, unsigned int inputPo
 		return;
 	}
 
-#ifdef GENESYS_HAVE_GLPK
-	MetabolicFluxBalanceSolver::Solution solution = GlpkFluxBalanceSolver::solve(problem);
-#else
-	MetabolicFluxBalanceSolver::Solution solution = MetabolicFluxBalanceSolver::solve(problem);
-#endif
+	MetabolicFluxBalanceSolver_if* mfb_solver = new TraitsTools<MetabolicFluxBalanceSolver_if>::Implementation;
+	MetabolicFluxBalanceSolver_if::Solution solution = mfb_solver->solve(problem);
+
 	if (!solution.feasible) {
 		_lastSucceeded = false;
 		_lastObjectiveValue = 0.0;

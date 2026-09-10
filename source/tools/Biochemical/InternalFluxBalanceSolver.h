@@ -1,11 +1,10 @@
-#ifndef METABOLICFLUXBALANCESOLVER_H
-#define METABOLICFLUXBALANCESOLVER_H
-
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <string>
 #include <vector>
+
+#include "MetabolicFluxBalanceSolver_if.h"
 
 /**
  * Small LP solver for flux-balance problems with equality constraints and
@@ -20,26 +19,11 @@
  * small metabolic models currently exercised by the runtime tests and provides
  * a concrete solver-backed replacement for the previous stub objective logic.
  */
-class MetabolicFluxBalanceSolver {
-public:
-	struct Problem {
-		std::vector<std::vector<double>> stoichiometry;
-		std::vector<double> lowerBounds;
-		std::vector<double> upperBounds;
-		std::vector<double> objective;
-		bool maximize = true;
-	};
 
-	struct Solution {
-		bool feasible = false;
-		double objectiveValue = 0.0;
-		std::vector<double> fluxes;
-		std::string errorMessage;
-	};
-
+class InternalFluxBalanceSolver : public MetabolicFluxBalanceSolver_if {
 public:
-	static Solution solve(const Problem& problem) {
-		Solution solution;
+	MetabolicFluxBalanceSolver_if::Solution solve(const MetabolicFluxBalanceSolver_if::Problem& problem) override {
+		MetabolicFluxBalanceSolver_if::Solution solution;
 		const std::size_t variableCount = problem.objective.size();
 		if (variableCount == 0u) {
 			solution.errorMessage = "Empty objective vector.";
@@ -353,5 +337,3 @@ private:
 		return false;
 	}
 };
-
-#endif /* METABOLICFLUXBALANCESOLVER_H */

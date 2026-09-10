@@ -16,6 +16,7 @@
 // TOOLS
 #include "AIAssistant/AIAssistant_if.h"
 #include "AIAssistant/AIAssistantDefaultImpl.h"
+#include "Biochemical/GlpkFluxBalanceSolver.h"
 #include "Continuous/SolverDefaultImpl1.h"
 #include "Statistics/HypothesisTesterDefaultImpl1.h"
 #include "Statistics/HypothesisTester_if.h"
@@ -69,6 +70,13 @@ template <> struct TraitsTools<Fitter_if> {
  */
 template <> struct TraitsTools<AIAssistant_if> {
 	typedef AIAssistantDefaultImpl Implementation;
+};
+
+/*!
+ *  Configure the MFB solver to be used
+ */
+template <> struct TraitsTools<MetabolicFluxBalanceSolver_if> {
+	typedef GlpkFluxBalanceSolver Implementation;
 };
 
 #endif /* TRAITSTOOLS_H */
